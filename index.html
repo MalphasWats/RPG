@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RPG</title>
+    
+    <style type="text/css">
+        body {background: black; color:white;}
+        
+        canvas
+        {
+            background: white;
+            margin: 0px auto;
+            display:block;
+        }
+        
+        p
+        {
+            position:absolute;
+            top:5px;
+            left:20px;
+        }
+    </style>
+    <!--<link rel="stylesheet" href="quint.css" type="text/css" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+    <canvas width="640" height="576" id="canvas"></canvas>
+    <p><span id="fps"></span> fps.</p>
+    
+    
+    <script type="text/javascript" src="glixl.js"></script>
+    <script type="text/javascript" src="map.js"></script>
+    <script type="text/javascript" src="RPG.js"></script>
+    <!--<script type="text/javascript" src="quint.js"></script>-->
+    
+    <script type="text/javascript">
+                
+        glixl.start(RPG);
+        
+    </script>
+</body>
+</html>
