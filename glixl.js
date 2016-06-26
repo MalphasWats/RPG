@@ -790,7 +790,7 @@ var glixl = (function(glixl)
                 var c = left_right_up_down[i][0];
                 var r = left_right_up_down[i][1];
                 //console.log(r, c, this.map[r*this.columns+c]);
-                if ( typeof this.map[r*this.columns+c] == 'undefined' || typeof this.map[r*this.columns+c][depth] == 'undefined' || this.map[r*this.columns+c][depth].collidable )
+                if ( (typeof this.map[r*this.columns+c] == 'undefined' || typeof this.map[r*this.columns+c][depth] == 'undefined' || !this.map[r*this.columns+c][depth].collidable) && !findInClosed(c, r) )
                 //if ( ( (this.map[r*this.columns+c][depth].length === 0 && !inverted)   || 
                 //       (this.map[r*this.columns+c][depth].length  >  0 &&  inverted) ) && 
                 //     !findInClosed(c, r) ) 

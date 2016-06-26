@@ -1,6 +1,6 @@
 function RPG()
 {		
-	var MAP_SIZE = [20, 18, 3] // cols x rows x depth
+	var MAP_SIZE = [20, 18, 3] // cols * rows * depth
 	var SCALE = 2;
 			
 	var protag, spr;
@@ -39,7 +39,7 @@ function RPG()
 		}
 		glixl.scene.set_active_tilemap(tilemap);
 				
-		protag = new glixl.Sprite( {sprite_sheet: sprite_sheet, x: 32*2*1, y: 32*2*7, z:1, size:[16, 16], scale: SCALE, frame:41} );		
+		protag = new glixl.Sprite( {sprite_sheet: sprite_sheet, x: 32*SCALE*1, y: 32*SCALE*7, z:1, size:[16, 16], scale: SCALE, frame:41} );		
 		glixl.scene.add_sprite(protag);
         
         spr = new glixl.Sprite( {sprite_sheet: sprite_sheet, x: 32*18, y: 32*16, z:1, size:[16, 16], scale: SCALE, frame:42} );		
@@ -47,70 +47,101 @@ function RPG()
 		
 		protag.vx = 0;
 		protag.vy = 0;
-		protag.speed = 160; //pixels per second
+		protag.speed = 140; //pixels per second
 		protag.move_timer = (new Date()).getTime();
+		
+		protag.destination = false;
+		protag.path = []
 		
 		protag.move = function()
 		{
 			var now = (new Date()).getTime();
 			var delta = now - this.move_timer;
 			
-			var last_x = this.x;
-			var last_y = this.y;
+			var dx = Math.abs(this.x - this.destination.x);
+			var next_step = Math.round(this.vx * (delta / 1000 * this.speed));
+			if (dx < next_step)
+			    next_step = dx*this.vx;
+			    
+			this.x += next_step;
 			
-			this.x += Math.round(this.vx * (delta / 1000 * this.speed));	
-			this.vx = 0;
+			var dy = Math.abs(this.y - this.destination.y);
+			var next_step = Math.round(this.vy * (delta / 1000 * this.speed));
+			if (dy < next_step)
+			    next_step = dy*this.vy;
 			
-			this.y += Math.round(this.vy * (delta / 1000 * this.speed));
-			this.vy = 0;
-			
-			if (glixl.scene.collide(this))
-			{
-				this.x = last_x;
-				this.y = last_y;
-			}
+			this.y += next_step;
 				
 			this.move_timer = now;
 			glixl.scene.center_on(this);
 			this.redraw = true;
 		}
+		
+		protag.set_path = function(path)
+		{
+    		this.path = path;
+    		this.destination = this.path.shift();
+    		this.destination.x += (this.width/2) * this.scale;
+            this.destination.y += (this.height/4) * this.scale;
+		} 
+		
+		protag.move_ = function()
+		{
+    		if (this.destination)
+            {
+                if (this.x == this.destination.x && this.y == this.destination.y)
+                {
+                    if (this.path.length > 0)
+                    {
+                        this.destination = this.path.shift()
+                        this.destination.x += (this.width/2) * this.scale;
+                        this.destination.y += (this.height/4) * this.scale;
+                    }
+                    else
+                    {
+                        this.destination = false
+                    }
+                }
+                this.vx = 0
+                this.vy = 0
+                if(this.x > this.destination.x)
+                {
+                    this.vx = -1;
+                }
+                else if (this.x < this.destination.x)
+                {
+                    this.vx = 1;
+                }
+                if(this.y > this.destination.y)
+                {
+                    this.vy = -1;
+                }
+                else if (this.y < this.destination.y)
+                {
+                    this.vy = 1;
+                }
+                
+            }
+    		this.move()
+		}
+		
 	}
 	
 	this.update = function()
 	{
-		if (glixl.key_pressed("d"))// || quint.touched("right"))
-		{
-			//protag.set_animation(protag.animations.right);
-			protag.vx = 1;
-		}
-		if (glixl.key_pressed("s"))// || quint.touched("down"))
-		{
-			//protag.set_animation(protag.animations.down);
-			protag.vy = 1
-		}
-		
-		if (glixl.key_pressed("a"))// || quint.touched("left"))
-		{
-			//protag.set_animation(protag.animations.left);
-			protag.vx = -1;
-		}
-		if (glixl.key_pressed("w"))// || quint.touched("up"))
-		{
-			//protag.set_animation(protag.animations.up);
-			protag.vy = -1
-		}
-		
-		protag.move();
         spr.redraw = true;
-		document.getElementById('fps').innerHTML = glixl.fps;
 		
 		if (glixl.mouse_down && click_timer < 0)
         {
             var path = tilemap.find_path([protag.x, protag.y], [glixl.mouse_x, glixl.mouse_y], protag.z, true);
-            console.log(path);
+            protag.set_path(path);
+
             click_timer = 20;
-		    //console.log(glixl.mouse_x, glixl.mouse_y);
         }
         click_timer -= 1;
+        
+        protag.move_();
+        
+        document.getElementById('fps').innerHTML = glixl.fps;
 	}
 }
