@@ -1055,8 +1055,16 @@ var glixl = (function(glixl)
     
     glixl.save_mouse_position = function(e)
     {
-        glixl.mouse_x = (e.clientX - glixl.canvas.offsetLeft) + glixl.scene.viewport.x;
-        glixl.mouse_y = (e.clientY - glixl.canvas.offsetTop) + glixl.scene.viewport.y;
+        /* clientX & clientY don't take into account scrolling on the page.
+           Normally this wouldn't be a problem, as you'd design a game not to
+           scroll, but when I had the debugging console open, I noticed that this
+           went all wonky. pageX and pageY appear to have the correct co-ordinates!
+        */
+        //glixl.mouse_x = (e.clientX - glixl.canvas.offsetLeft) + glixl.scene.viewport.x;
+        //glixl.mouse_y = (e.clientY - glixl.canvas.offsetTop) + glixl.scene.viewport.y;
+        
+        glixl.mouse_x = (e.pageX - glixl.canvas.offsetLeft) + glixl.scene.viewport.x;
+        glixl.mouse_y = (e.pageY - glixl.canvas.offsetTop) + glixl.scene.viewport.y;
     }
     
     
