@@ -60,7 +60,7 @@ function RPG()
         }
         click_timer -= 1;
         
-        if (Math.abs( (spr.x-player.x) + (spr.y-player.y) ) < 150)
+        if (Math.abs( (spr.x-player.x) + (spr.y-player.y) ) < 150 && Math.abs( (spr.x-spr.home[0]) + (spr.y-spr.home[1]) < 300))
         {
             path = tilemap.find_path([spr.x, spr.y], [player.x, player.y], spr.z); 
             path.shift();
