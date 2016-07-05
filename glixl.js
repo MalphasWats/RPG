@@ -780,20 +780,44 @@ var glixl = (function(glixl)
              *  update it if it's already in the open list.
              */
             var left_right_up_down = [];
-            if (col > 0) { left_right_up_down.push([col-1, row]) }
-            if (col < this.columns-1) { left_right_up_down.push([col+1, row]) }
-            if (row > 0) {left_right_up_down.push([col, row-1])}
-            if (row < this.rows-1) { left_right_up_down.push([col, row+1]) }
+            if (col > 0) 
+            { 
+                left_right_up_down.push([col-1, row]);
+                if (row > 0)
+                {
+                    left_right_up_down.push([col-1, row-1]);
+                }
+            }
+            if (col < this.columns-1)
+            { 
+                left_right_up_down.push([col+1, row]);
+                if (row < this.rows-1)
+                {
+                    left_right_up_down.push([col+1, row+1]);
+                }
+            }
+            if (row > 0)
+            {
+                left_right_up_down.push([col, row-1]);
+                if (col < this.columns-1)
+                {
+                    left_right_up_down.push([col+1, row-1]);
+                }
+            }
+            if (row < this.rows-1) 
+            {
+                left_right_up_down.push([col, row+1]);
+                if (col > 0)
+                {
+                    left_right_up_down.push([col-1, row+1]);
+                }
+            }
         
             for (var i=0 ; i<left_right_up_down.length ; i++) 
             {
                 var c = left_right_up_down[i][0];
                 var r = left_right_up_down[i][1];
-                //console.log(r, c, this.map[r*this.columns+c]);
                 if ( (typeof this.map[r*this.columns+c] == 'undefined' || typeof this.map[r*this.columns+c][depth] == 'undefined' || !this.map[r*this.columns+c][depth].collidable) && !findInClosed(c, r) )
-                //if ( ( (this.map[r*this.columns+c][depth].length === 0 && !inverted)   || 
-                //       (this.map[r*this.columns+c][depth].length  >  0 &&  inverted) ) && 
-                //     !findInClosed(c, r) ) 
                 {
                     score = step+1+crowFlies([c, r] , [end_col, end_row]);
                     if (!open_nodes[c][r] || (open_nodes[c][r] && open_nodes[c][r].score > score)) 
