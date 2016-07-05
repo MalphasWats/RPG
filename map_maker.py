@@ -25,5 +25,6 @@ for y in range(MAP_SIZE[1]):
     map_file.write(line)
     map_file.write('\n    /*%03d*/        ' % (y+1))
 
-map_file.write("			];")
+map_file.write("			];\n\n")
+map_file.write("var SOLID_TILES = [2, 3, 9, 22, 23, 24, 25];")
 map_file.close()

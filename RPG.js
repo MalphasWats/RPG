@@ -26,12 +26,12 @@ function RPG()
                 {
                     for (var t=0 ; t<map[r*MAP_SIZE[0]+c].length ; t++)
                     {
-                        tilemap.push_tile(c, r, new glixl.Tile({frame:map[r*MAP_SIZE[0]+c][t], collidable: map[r*MAP_SIZE[0]+c][t] == 9}));
+                        tilemap.push_tile(c, r, new glixl.Tile({frame:map[r*MAP_SIZE[0]+c][t], collidable: SOLID_TILES.indexOf(map[r*MAP_SIZE[0]+c][t]) > -1}));
                     }
                 }
                 else
                 {
-                    tilemap.push_tile(c, r, new glixl.Tile({frame:map[r*MAP_SIZE[0]+c], collidable: map[r*MAP_SIZE[0]+c] == 9}));
+                    tilemap.push_tile(c, r, new glixl.Tile({frame:map[r*MAP_SIZE[0]+c], collidable: SOLID_TILES.indexOf(map[r*MAP_SIZE[0]+c][t]) > -1}));
                     
                     
                 }
