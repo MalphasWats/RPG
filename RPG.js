@@ -3,7 +3,7 @@ function RPG()
 	var MAP_SIZE = [20, 18, 3] // cols * rows * depth
 	var SCALE = 2;
 			
-	var protag, spr;
+	var player, spr;
 	
 	var sprite_sheet;
 	var tilemap;
@@ -38,109 +38,44 @@ function RPG()
 			}
 		}
 		glixl.scene.set_active_tilemap(tilemap);
-				
-		protag = new glixl.Sprite( {sprite_sheet: sprite_sheet, x: 32*SCALE*1, y: 32*SCALE*7, z:1, size:[16, 16], scale: SCALE, frame:41} );		
-		glixl.scene.add_sprite(protag);
+		
+		player = new Player({sprite_sheet: sprite_sheet, x: 32*SCALE*1, y: 32*SCALE*7, z:1, size:[16, 16], scale: SCALE, frame:41, speed: 140});		
+		glixl.scene.add_sprite(player);
         
-        spr = new glixl.Sprite( {sprite_sheet: sprite_sheet, x: 32*18, y: 32*16, z:1, size:[16, 16], scale: SCALE, frame:42} );		
-		glixl.scene.add_sprite(spr);
-		
-		protag.vx = 0;
-		protag.vy = 0;
-		protag.speed = 140; //pixels per second
-		protag.move_timer = (new Date()).getTime();
-		
-		protag.destination = false;
-		protag.path = []
-		
-		protag.move = function()
-		{
-			var now = (new Date()).getTime();
-			var delta = now - this.move_timer;
-			
-			var dx = Math.abs(this.x - this.destination.x);
-			var next_step = Math.round(this.vx * (delta / 1000 * this.speed));
-			if (dx < next_step)
-			    next_step = dx*this.vx;
-			    
-			this.x += next_step;
-			
-			var dy = Math.abs(this.y - this.destination.y);
-			var next_step = Math.round(this.vy * (delta / 1000 * this.speed));
-			if (dy < next_step)
-			    next_step = dy*this.vy;
-			
-			this.y += next_step;
-				
-			this.move_timer = now;
-			glixl.scene.center_on(this);
-			this.redraw = true;
-		}
-		
-		protag.set_path = function(path)
-		{
-    		this.path = path;
-    		this.destination = this.path.shift();
-    		this.destination.x += (this.width/2) * this.scale;
-            this.destination.y += (this.height/4) * this.scale;
-		} 
-		
-		protag.move_ = function()
-		{
-    		if (this.destination)
-            {
-                if (this.x == this.destination.x && this.y == this.destination.y)
-                {
-                    if (this.path.length > 0)
-                    {
-                        this.destination = this.path.shift()
-                        this.destination.x += (this.width/2) * this.scale;
-                        this.destination.y += (this.height/4) * this.scale;
-                    }
-                    else
-                    {
-                        this.destination = false
-                    }
-                }
-                this.vx = 0
-                this.vy = 0
-                if(this.x > this.destination.x)
-                {
-                    this.vx = -1;
-                }
-                else if (this.x < this.destination.x)
-                {
-                    this.vx = 1;
-                }
-                if(this.y > this.destination.y)
-                {
-                    this.vy = -1;
-                }
-                else if (this.y < this.destination.y)
-                {
-                    this.vy = 1;
-                }
-                
-            }
-    		this.move()
-		}
-		
+        spr = new Mob( {sprite_sheet: sprite_sheet, x: 32*18, y: 32*16, z:1, size:[16, 16], scale: SCALE, frame:42, speed: 80, home: [32*18, 32*16]} );		
+		glixl.scene.add_sprite(spr);		
 	}
 	
 	this.update = function()
 	{
-        spr.redraw = true;
-		
+        //spr.redraw = true;
+		var path;
 		if (glixl.mouse_down && click_timer < 0)
         {
-            var path = tilemap.find_path([protag.x, protag.y], [glixl.mouse_x, glixl.mouse_y], protag.z, true);
-            protag.set_path(path);
+            path = tilemap.find_path([player.x, player.y], [glixl.mouse_x, glixl.mouse_y], player.z);
+            player.set_path(path);
 
             click_timer = 20;
+            spr.clear_path();
         }
         click_timer -= 1;
         
-        protag.move_();
+        if (Math.abs( (spr.x-player.x) + (spr.y-player.y) ) < 150)
+        {
+            path = tilemap.find_path([spr.x, spr.y], [player.x, player.y], spr.z); 
+            path.shift();
+            spr.set_path(path);
+        }
+        else
+        {
+            path = tilemap.find_path([spr.x, spr.y], spr.home, spr.z); 
+            path.shift();
+            spr.set_path(path);
+        }
+        
+        player.update();
+        spr.update();
+        glixl.scene.center_on(player);
         
         document.getElementById('fps').innerHTML = glixl.fps;
 	}
