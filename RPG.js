@@ -53,6 +53,7 @@ function RPG()
 		if (glixl.mouse_down && click_timer < 0)
         {
             path = tilemap.find_path([player.x, player.y], [glixl.mouse_x, glixl.mouse_y], player.z);
+            path.shift();
             player.set_path(path);
 
             click_timer = 20;
@@ -62,7 +63,7 @@ function RPG()
         
         if (Math.abs( (spr.x-player.x) + (spr.y-player.y) ) < 150 && Math.abs( (spr.x-spr.home[0]) + (spr.y-spr.home[1]) ) < 300)
         {
-            path = tilemap.find_path([spr.x, spr.y], [player.x, player.y], spr.z); 
+            path = tilemap.find_path([spr.x, spr.y], [player.x, player.y], spr.z);
             path.shift();
             spr.set_path(path);
         }
