@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RPG</title>
+    <title>RPG - 2</title>
     
     <style type="text/css">
         body {background: black; color:white;}
@@ -24,20 +24,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
-    <canvas width="640" height="576" id="canvas"></canvas>
+    <canvas width="704" height="512" id="canvas"></canvas>
     <p><span id="fps"></span> fps.</p>
     
     <script type="text/javascript" src="util.js"></script>
+    <script type="text/javascript" src="glixl.Game.class.js"></script>
+    <script type="text/javascript" src="glixl.Scene.class.js"></script>
+    <script type="text/javascript" src="glixl.SpriteSheet.class.js"></script>
+    <script type="text/javascript" src="glixl.Sprite.class.js"></script>
+    <script type="text/javascript" src="glixl.Tile.class.js"></script>
+    <script type="text/javascript" src="RPG2.js"></script>
+    <!--
+    <script type="text/javascript" src="quint.js"></script>
     <script type="text/javascript" src="glixl.js"></script>
     <script type="text/javascript" src="Mob.class.js"></script>
     <script type="text/javascript" src="Player.class.js"></script>
     <script type="text/javascript" src="map.js"></script>
-    <script type="text/javascript" src="RPG.js"></script>
-    <!--<script type="text/javascript" src="quint.js"></script>-->
+    
+    
+    -->
     
     <script type="text/javascript">
-                
-        glixl.start(RPG);
+        
+        my_game = new RPG();
+        my_game.start()
+        <!--glixl.start(RPG);-->
         
     </script>
 </body>
