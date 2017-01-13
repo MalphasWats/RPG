@@ -28,7 +28,7 @@ var glixl = (function(glixl)
             
             void main()
             {
-                gl_Position = viewport_matrix * projection_matrix * vec4(a_position, 1);
+                gl_Position = projection_matrix * viewport_matrix  * vec4(a_position, 1);
                 //gl_Position = projection_matrix * vec4(a_position, 1);
                 //gl_Position = viewport_matrix * vec4(a_position, 1);
                 v_texCoords = a_texCoords;
@@ -119,22 +119,20 @@ var glixl = (function(glixl)
             throw new Error("*** Error: Could not link program: " + lastError);
         }
         
-        return program
+        return program;
     }
     
     glixl.Game.prototype.set_scene = function(scene)
     {
         this.scene = scene;
-        this.scene.set_viewport({x: 0, y:0, width:this.width, height:this.height});
+        this.scene.initialise_viewport({x: 0, y:0, width:this.width, height:this.height});
         
-        //this.scene.initialise_buffers();
         this.scene.sprite_sheet.bind();
     }
     
     glixl.Game.prototype.start = function()
     {
-        console.log('Game Started!')
-        
+        console.log('Game Started!');
         /*this.app_loop = function(ts)
         {
             //glixl.update_fps(ts);

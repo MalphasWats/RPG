@@ -1,6 +1,6 @@
 import random
 
-MAP_SIZE = (200, 180)
+MAP_SIZE = (44, 32)
 
 map_file = open('map.js', 'w')
 
@@ -19,7 +19,7 @@ for y in range(MAP_SIZE[1]):
         if r > 990:
             line += ' [0, 9],      '
         elif r > 950:
-            line += '  4,          '
+            line += '  1,          '
         else:
             line += '  0,          '
     map_file.write(line)

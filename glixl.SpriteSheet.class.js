@@ -4,10 +4,6 @@ var glixl = (function(glixl)
     {
         if (!parameters.context)
             throw new Error("*** GLIXL ERROR: No gl context provided to SpriteSheet");
-        //if (!parameters.src)
-        //    throw new Error("*** GLIXL ERROR: src not provided to SpriteSheet");
-        //if (!parameters.frame_size)
-        //    throw new Error("*** Error: frame size not provided to SpriteSheet");
             
         this.context = parameters.context;
         this.src = parameters.src || '';
@@ -43,8 +39,6 @@ var glixl = (function(glixl)
 
             try 
             {
-                //this.sprite_sheet.texture = this.sprite_sheet.context.createTexture();
-                //this.sprite_sheet.bind_texture();
                 var ctx = this.sprite_sheet.context;
                 
                 // TODO: allow for ^2 textures with mips (need to check benefit with using parts of texture
@@ -72,8 +66,6 @@ var glixl = (function(glixl)
                 this.sprite_sheet.texture_coordinates = [];
                 for (var frame=0 ; frame<cols*rows ; frame++)
                 {
-                    //this.sprite_sheet.texture_coordinate_cache.push(this.sprite_sheet.get_coordinates_for_frame(frame));
-                    
                     var w = this.width / this.sprite_sheet.frame_width;
                     var h = this.height / this.sprite_sheet.frame_height;
                     
@@ -100,7 +92,6 @@ var glixl = (function(glixl)
             catch (error) 
             {
                 console.log("*** GLIXL WARNING: Unable to create texture");
-                //this.sprite_sheet.texture = glixl.DEFAULT_TEXTURE;
             }
             this.sprite_sheet.loaded = true
         }

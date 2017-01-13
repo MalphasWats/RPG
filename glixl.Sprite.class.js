@@ -18,9 +18,9 @@ var glixl = (function(glixl)
     glixl.Sprite.prototype.update = function()
     {
         // TODO: Animation code goes here
-        this.x += 1;
-        if (this.x > 700)
-            this.x = 0;
+        //this.x += 1;
+        //if (this.x > 700)
+        //    this.x = 0;
     }
     
     return glixl;
