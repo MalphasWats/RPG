@@ -74,6 +74,8 @@ var glixl = (function(glixl)
         
         this.canvas.addEventListener("mouseup", this.handle_mouse_up.bind(this), false);
         
+        this.event_queue = [];
+        
         /* TODO: Create a 'loading' scene */
 
         this.prevTS = 0;
@@ -155,6 +157,11 @@ var glixl = (function(glixl)
         this.scene.update();
         this.scene.draw();
         
+        for (var i=0 ; i<this.event_queue.length ; i++)
+            this.event_queue[i].use();
+            
+        this.event_queue = [];
+        
         var delta = ts - this.prevTS;
         this.prevTS = ts;
         
@@ -184,7 +191,8 @@ var glixl = (function(glixl)
         var mouse_x = (e.pageX - this.canvas.offsetLeft) + this.scene.viewport.x;
         var mouse_y = (e.pageY - this.canvas.offsetTop) + this.scene.viewport.y;
         
-        console.log("clicked", mouse_x, mouse_y);
+        var item = this.scene.get_topmost_item(mouse_x, mouse_y);
+        this.event_queue.push(item);
     }
         
     return glixl;

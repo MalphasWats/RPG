@@ -17,6 +17,11 @@ var glixl = (function(glixl)
         
     }
     
+    glixl.Tile.prototype.use = function()
+    {
+        
+    }
+    
     return glixl;
     
 })(glixl || {});

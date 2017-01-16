@@ -1,5 +1,6 @@
 var Wiz = function(parameters)
 {
+    parameters.speed = 128;
     glixl.Sprite.call(this, parameters);
 }
 
@@ -7,17 +8,29 @@ Wiz.prototype.update = function()
 {
     glixl.Sprite.prototype.update.call(this);
     
-    //this.x += 3;
-    if (this.x > my_game.scene.width)
-        this.x = 0;
+    var destination = my_game.event_queue[0];
     
-    //this.y += 3;
-    if (this.y > my_game.scene.height)
-        this.y = 0;
+    if (destination)
+    {
+        this.path = my_game.scene.find_path(this, destination);
+        this.path.shift(); // first coords are current location
+        this.destination = this.path.shift();
+    }
     
     my_game.scene.center_on(this);
 }
 extend(glixl.Sprite, Wiz);
+
+var Rock = function(parameters)
+{
+    parameters.frame = 9;
+    glixl.Tile.call(this, parameters);
+}
+
+Rock.prototype.use = function()
+{
+    console.log('Ouch!');
+}
 
 
 var RPG = function()
@@ -40,24 +53,24 @@ var RPG = function()
     var MAP_SIZE = [44, 32];
     
     for (var r=0 ; r<MAP_SIZE[1] ; r++)
+	{
+        for (var c=0 ; c<MAP_SIZE[0] ; c++)
 		{
-            for (var c=0 ; c<MAP_SIZE[0] ; c++)
-			{
-                if (typeof map[r*MAP_SIZE[0]+c] == 'object')
+            if (typeof map[r*MAP_SIZE[0]+c] == 'object')
+            {
+                for (var t=0 ; t<map[r*MAP_SIZE[0]+c].length ; t++)
                 {
-                    for (var t=0 ; t<map[r*MAP_SIZE[0]+c].length ; t++)
-                    {
-                        scene.add_tile(new glixl.Tile({ frame:map[r*MAP_SIZE[0]+c][t], x:c*32 , y:r*32, z:t*32, width:32, height: 32 }));
-                    }
+                    scene.add_tile(new glixl.Tile({ frame:map[r*MAP_SIZE[0]+c][t], x:c*32 , y:r*32, z:t*32, width:32, height: 32 }));
                 }
-                else
-                {
-                    scene.add_tile(new glixl.Tile({ frame:map[r*MAP_SIZE[0]+c], x:c*32 , y:r*32, z:0, width:32, height: 32 }));
-                    
-                    
-                }
-			}
+            }
+            else
+            {
+                scene.add_tile(new glixl.Tile({ frame:map[r*MAP_SIZE[0]+c], x:c*32 , y:r*32, z:0, width:32, height: 32 }));
+            }
 		}
+	}
+	
+	scene.add_tile( new Rock({x:4*32 , y:6*32, z:32, width:32, height: 32 }) );
     
     /*for (var i=0 ; i<10 ; i++)
     {

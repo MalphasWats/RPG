@@ -127,29 +127,15 @@ var glixl = (function(glixl)
     glixl.Scene.prototype.add_tile = function(tile)
     {
         var col = Math.floor(tile.x / tile.width);
-        var row = Math.floor(tile.y / tile.height);
+        var row = Math.floor( (tile.y - tile.z) / tile.height) ;
+        //var row = Math.floor( tile.y / tile.height) ;
+        if (row < 0)
+            return; // anything with a row < 0 (because z) can't be displayed anyway, so isn't useful to put in tilemap.
         var depth = Math.floor(tile.z / tile.height);
         
         this.tiles.push(tile);
         
         this.tilemap[col][row][depth] = tile;
-        
-        /*if (this.tilemap[row])
-        {
-            if (this.tilemap[row][col])
-            {
-                this.tilemap[row][col].push(tile);
-            }
-            else
-            {
-                this.tilemap[row][col] = [tile];
-            }
-        }
-        else
-        {
-            this.tilemap[row] = [];
-            this.tilemap[row][col] = [tile];
-        }*/
     }
     
     glixl.Scene.prototype.update = function()
@@ -242,23 +228,37 @@ var glixl = (function(glixl)
         ];
     }
     
+    glixl.Scene.prototype.get_topmost_item = function(x, y)
+    {
+        var col = Math.floor(x / this.tile_size.width);
+        var row = Math.floor(y / this.tile_size.height);
+        
+        var depth = 0;
+        while ( this.tilemap[col][row][depth] )
+            depth += 1;
+        
+        return this.tilemap[col][row][depth-1];
+    }
+    
     glixl.Scene.prototype.find_path = function(start, end)
     {
-        var start_col = parseInt(start_position[0] / (this.tile_width * this.scale));
-        var start_row = parseInt(start_position[1] / (this.tile_height * this.scale));
+        var start_col = Math.floor(start.x / this.tile_size.width);
+        var start_row = Math.floor((start.y-start.z) / this.tile_size.height);
   
-        var end_col = parseInt(end_position[0] / (this.tile_width * this.scale));
-        var end_row = parseInt(end_position[1] / (this.tile_height * this.scale));
+        var end_col = Math.floor(end.x / this.tile_size.width);
+        var end_row = Math.floor((end.y-end.z) / this.tile_size.height);
+        
+        var depth = Math.floor(start.z / this.tile_size.height);
   
         if (start_col === end_col && start_row === end_row)
-            return [{x: start_position[0], y:start_position[1]}];
+            return [{x: start_position.x, y:start_position.y}];
   
         var col = start_col;
         var row = start_row;
         var step = 0;
         var score = 0;
         //travel corner-to-corner, through every square, plus one, just to make sure
-        var max_distance = (this.columns*this.rows * 2)+1;
+        var max_distance = (this.columns*this.rows)+1;
   
         var open_nodes = new Array(this.columns);
         for(var i=0 ; i < this.columns ; i++) 
@@ -292,7 +292,7 @@ var glixl = (function(glixl)
                 return true;
             else 
                 return false;
-        }
+        };
   
         while ( !(col === end_col && row === end_row) ) 
         {
@@ -302,45 +302,47 @@ var glixl = (function(glixl)
              *  to the closed list, recalculate its score from the current node and
              *  update it if it's already in the open list.
              */
-            var left_right_up_down = [];
+            var moore_neighbourhood = [];
             if (col > 0) 
             { 
-                left_right_up_down.push([col-1, row]);
+                moore_neighbourhood.push([col-1, row]);
                 if (row > 0)
                 {
-                    left_right_up_down.push([col-1, row-1]);
+                    moore_neighbourhood.push([col-1, row-1]);
                 }
             }
             if (col < this.columns-1)
             { 
-                left_right_up_down.push([col+1, row]);
+                moore_neighbourhood.push([col+1, row]);
                 if (row < this.rows-1)
                 {
-                    left_right_up_down.push([col+1, row+1]);
+                    moore_neighbourhood.push([col+1, row+1]);
                 }
             }
             if (row > 0)
             {
-                left_right_up_down.push([col, row-1]);
+                moore_neighbourhood.push([col, row-1]);
                 if (col < this.columns-1)
                 {
-                    left_right_up_down.push([col+1, row-1]);
+                    moore_neighbourhood.push([col+1, row-1]);
                 }
             }
             if (row < this.rows-1) 
             {
-                left_right_up_down.push([col, row+1]);
+                moore_neighbourhood.push([col, row+1]);
                 if (col > 0)
                 {
-                    left_right_up_down.push([col-1, row+1]);
+                    moore_neighbourhood.push([col-1, row+1]);
                 }
             }
         
-            for (var i=0 ; i<left_right_up_down.length ; i++) 
+            for (var i=0 ; i<moore_neighbourhood.length ; i++) 
             {
-                var c = left_right_up_down[i][0];
-                var r = left_right_up_down[i][1];
-                if ( (typeof this.tilemap[r][c] == 'undefined' || typeof this.map[r][c][depth] == 'undefined' || !this.map[r*this.columns+c][depth].collidable) && !findInClosed(c, r) )
+                var c = moore_neighbourhood[i][0];
+                var r = moore_neighbourhood[i][1];
+                // TODO: Allow some tiles to be collidable / not collidable
+                //if ( (typeof this.tilemap[c][r] === 'undefined' || typeof this.tilemap[c][r][depth] === 'undefined' || !this.tilemap[c][r][depth].collidable) && !findInClosed(c, r) )
+                if ( !this.tilemap[c][r][depth] && !findInClosed(c, r) )
                 {
                     score = step+1+crowFlies([c, r] , [end_col, end_row]);
                     if (!open_nodes[c][r] || (open_nodes[c][r] && open_nodes[c][r].score > score)) 
@@ -387,12 +389,12 @@ var glixl = (function(glixl)
          */
         var path = [];
         var current_node = closed_nodes[col][row];
-        path.unshift({x: col*this.tile_width*this.scale, y: row*this.tile_height * this.scale});
+        path.unshift({ x: col*this.tile_size.width, y: row*this.tile_size.height+start.z });
         while(! (col === start_col && row === start_row) )
         {
             col = current_node.parent[0];
             row = current_node.parent[1];
-            path.unshift({x: col*this.tile_width*this.scale, y: row*this.tile_height * this.scale});
+            path.unshift({x: col*this.tile_size.width, y: row*this.tile_size.height+start.z});
             current_node = closed_nodes[col][row];
         }
         
