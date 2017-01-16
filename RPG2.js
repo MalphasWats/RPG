@@ -2,6 +2,15 @@ var Wiz = function(parameters)
 {
     parameters.speed = 128;
     glixl.Sprite.call(this, parameters);
+    
+    this.label = document.createElement('span');
+    this.label.innerHTML = parameters.name || 'Jeff';
+    
+    this.label.style.position = 'absolute';
+    this.label.style.top = '0px';
+    this.label.style.left = '0px';
+    
+    document.getElementsByTagName('body')[0].appendChild(this.label);
 }
 
 Wiz.prototype.update = function()
@@ -17,9 +26,35 @@ Wiz.prototype.update = function()
         this.destination = this.path.shift();
     }
     
+    this.label.style.top = String(0 + my_game.canvas.offsetTop + this.y - this.z - this.height/2-my_game.scene.viewport.y) + 'px';
+    this.label.style.left = String(0 + my_game.canvas.offsetLeft + this.x-my_game.scene.viewport.x) + 'px';
+    
+    //console.log(my_game.canvas.offsetTop, my_game.canvas.offsetLeft)
+    
     my_game.scene.center_on(this);
 }
 extend(glixl.Sprite, Wiz);
+
+var Orc = function(parameters)
+{
+    Wiz.call(this, parameters);
+}
+
+Orc.prototype.update = function()
+{    
+    var top = my_game.canvas.offsetTop + this.y - my_game.scene.viewport.y;
+    var left = my_game.canvas.offsetLeft + this.x-my_game.scene.viewport.x;
+    if (top > my_game.canvas.offsetTop + my_game.canvas.clientHeight || top < my_game.canvas.offsetTop || 
+        left > my_game.canvas.offsetLeft + my_game.canvas.clientWidth || left < my_game.canvas.offsetLeft)
+        this.label.style.display = 'none';
+    else
+    {
+        this.label.style.display = 'block';
+        this.label.style.top = String(top) + 'px';
+        this.label.style.left = String(left) + 'px';
+    }
+}
+extend(Wiz, Orc);
 
 var Rock = function(parameters)
 {
@@ -41,13 +76,13 @@ var RPG = function()
     
     var scene = new glixl.Scene({ context: this.context, width: this.width*2, height: this.height*2, sprite_sheet: sprite_sheet, tile_size: {width: 32, height: 32} });
     
-    var wiz = new Wiz({frame: 41, x: 320, y:105, z:32, width:32, height:32});
+    var wiz = new Wiz({frame: 41, x: 320, y:105, z:32, width:32, height:32, name: 'Player'});
     wiz.add_animation('walk_down', [50, 51, 52, 53], 120);
     wiz.set_animation('walk_down');
     scene.add_sprite(wiz);
-    var wiz = new glixl.Sprite({frame: 50, x: 80, y:266, z:16, width:32, height:32});
-    wiz.add_animation('walk_down', [50, 51, 52, 53], 120);
-    wiz.set_animation('walk_down');
+    
+    
+    var wiz = new Orc({frame: 42, x: 1200, y:666, z:32, width:32, height:32});
     scene.add_sprite(wiz);
     
     var MAP_SIZE = [44, 32];
