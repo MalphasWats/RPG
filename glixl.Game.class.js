@@ -72,6 +72,8 @@ var glixl = (function(glixl)
         this.canvas.addEventListener("touchstart", this.handle_mouse_down, false);
         this.canvas.addEventListener("touchend", this.handle_mouse_up, false);*/
         
+        this.canvas.addEventListener("mouseup", this.handle_mouse_up.bind(this), false);
+        
         /* TODO: Create a 'loading' scene */
 
         this.prevTS = 0;
@@ -175,6 +177,14 @@ var glixl = (function(glixl)
     glixl.Game.prototype.draw = function()
     {
         
+    }
+    
+    glixl.Game.prototype.handle_mouse_up = function(e)
+    {
+        var mouse_x = (e.pageX - this.canvas.offsetLeft) + this.scene.viewport.x;
+        var mouse_y = (e.pageY - this.canvas.offsetTop) + this.scene.viewport.y;
+        
+        console.log("clicked", mouse_x, mouse_y);
     }
         
     return glixl;

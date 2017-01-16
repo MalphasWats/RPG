@@ -1,3 +1,24 @@
+var Wiz = function(parameters)
+{
+    glixl.Sprite.call(this, parameters);
+}
+
+Wiz.prototype.update = function()
+{
+    glixl.Sprite.prototype.update.call(this);
+    
+    //this.x += 3;
+    if (this.x > my_game.scene.width)
+        this.x = 0;
+    
+    //this.y += 3;
+    if (this.y > my_game.scene.height)
+        this.y = 0;
+    
+    my_game.scene.center_on(this);
+}
+extend(glixl.Sprite, Wiz);
+
 
 var RPG = function()
 {	
@@ -7,11 +28,13 @@ var RPG = function()
     
     var scene = new glixl.Scene({ context: this.context, width: this.width*2, height: this.height*2, sprite_sheet: sprite_sheet, tile_size: {width: 32, height: 32} });
     
-    var wiz = new glixl.Sprite({frame: 41, x: 435, y:105, z:32, width:32, height:32});
-    
+    var wiz = new Wiz({frame: 41, x: 320, y:105, z:32, width:32, height:32});
+    wiz.add_animation('walk_down', [50, 51, 52, 53], 120);
+    wiz.set_animation('walk_down');
     scene.add_sprite(wiz);
-    var wiz = new glixl.Sprite({frame: 40, x: 8, y:266, z:16, width:32, height:32});
-    
+    var wiz = new glixl.Sprite({frame: 50, x: 80, y:266, z:16, width:32, height:32});
+    wiz.add_animation('walk_down', [50, 51, 52, 53], 120);
+    wiz.set_animation('walk_down');
     scene.add_sprite(wiz);
     
     var MAP_SIZE = [44, 32];
