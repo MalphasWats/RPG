@@ -83,6 +83,18 @@ var glixl = (function(glixl)
         
         this.ambient_uniform = this.context.getUniformLocation(this.context.program, "ambient_light");
         this.ambient_light = 0.15;
+        
+        this.light_positions_uniform = this.context.getUniformLocation(this.context.program, "light_positions");
+        this.light_colours_uniform = this.context.getUniformLocation(this.context.program, "light_colours");
+        this.light_radii_uniform = this.context.getUniformLocation(this.context.program, "light_radii");
+        
+        this.light_count_uniform = this.context.getUniformLocation(this.context.program, "active_light_count");
+        
+        this.light_positions = [];
+        this.light_colours = [];
+        this.light_radii = [];
+        
+        this.light_count = 0;
     }
     
     glixl.Scene.prototype.initialise_viewport = function(parameters)
@@ -201,7 +213,12 @@ var glixl = (function(glixl)
         this.context.bindBuffer(this.context.ARRAY_BUFFER, this.sprite_texture_buffer);
         this.context.bufferData(this.context.ARRAY_BUFFER, new Float32Array(tex_coords), this.context.STREAM_DRAW);
         
-        //this.set_viewport(30, 300);
+        this.context.uniformMatrix4fv(this.viewport_uniform, false, this.viewport_matrix);
+        this.context.uniformMatrix4fv(this.projection_uniform, false, this.projection_matrix);
+        
+        this.context.uniform1f(this.ambient_uniform, this.ambient_light);
+        
+        // set lighting uniforms here
     }
     
     glixl.Scene.prototype.center_on = function(object)
@@ -407,12 +424,6 @@ var glixl = (function(glixl)
     glixl.Scene.prototype.draw = function()
     {
         this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
-        
-        this.context.uniformMatrix4fv(this.viewport_uniform, false, this.viewport_matrix);
-        this.context.uniformMatrix4fv(this.projection_uniform, false, this.projection_matrix);
-        
-        this.context.uniform1f(this.ambient_uniform, this.ambient_light);
-        
         
         this.context.bindBuffer(this.context.ARRAY_BUFFER, this.sprite_vertex_buffer);
         this.context.vertexAttribPointer(this.position_attribute, 3, this.context.FLOAT, false, 0, 0);
