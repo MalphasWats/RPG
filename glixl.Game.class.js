@@ -40,13 +40,15 @@ var glixl = (function(glixl)
             uniform sampler2D u_image;
             varying vec2 v_texCoords;
             
+            uniform float ambient_light;
+            
             void main() 
             { 
                 vec4 frag_color = texture2D(u_image, v_texCoords);
                 if (frag_color.a < 1.0)
                     discard;
                     
-                gl_FragColor = frag_color;
+                gl_FragColor = vec4(ambient_light * frag_color.rgb, 1);
             }
         `;
         
@@ -56,6 +58,8 @@ var glixl = (function(glixl)
         this.context.program = this.shader_program;
         
         this.context.enable ( this.context.DEPTH_TEST );
+        
+        this.context.clearColor(0, 0, 0, 1);
         
         /*window.addEventListener("keydown", this.handle_key_down);
         window.addEventListener("keyup", this.handle_key_up);

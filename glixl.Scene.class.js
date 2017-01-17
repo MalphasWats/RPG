@@ -80,6 +80,9 @@ var glixl = (function(glixl)
         this.tile_texture_coords = [];
         this.sprite_vertex_coords = [];
         this.sprite_texture_coords = [];
+        
+        this.ambient_uniform = this.context.getUniformLocation(this.context.program, "ambient_light");
+        this.ambient_light = 0.3;
     }
     
     glixl.Scene.prototype.initialise_viewport = function(parameters)
@@ -403,8 +406,12 @@ var glixl = (function(glixl)
     
     glixl.Scene.prototype.draw = function()
     {
+        this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
+        
         this.context.uniformMatrix4fv(this.viewport_uniform, false, this.viewport_matrix);
         this.context.uniformMatrix4fv(this.projection_uniform, false, this.projection_matrix);
+        
+        this.context.uniform1f(this.ambient_uniform, this.ambient_light);
         
         
         this.context.bindBuffer(this.context.ARRAY_BUFFER, this.sprite_vertex_buffer);
