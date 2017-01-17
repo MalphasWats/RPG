@@ -82,7 +82,7 @@ var glixl = (function(glixl)
         this.sprite_texture_coords = [];
         
         this.ambient_uniform = this.context.getUniformLocation(this.context.program, "ambient_light");
-        this.ambient_light = 0.3;
+        this.ambient_light = 0.15;
     }
     
     glixl.Scene.prototype.initialise_viewport = function(parameters)

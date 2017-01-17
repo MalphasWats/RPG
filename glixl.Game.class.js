@@ -45,9 +45,9 @@ var glixl = (function(glixl)
             
             uniform float ambient_light;
             
-            vec2 point_light_pos = vec2(300, 200);
-            vec3 point_light_col = vec3(1.0, 1.0, 1.0);
-            float point_light_rad = 180.0;
+            vec2 point_light_pos = vec2(336, 208);
+            vec3 point_light_col = vec3(0.9, 0.45, 0.24);
+            float point_light_rad = 160.0;
             
             void main() 
             { 
