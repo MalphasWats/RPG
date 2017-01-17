@@ -12,7 +12,9 @@ var glixl = (function(glixl)
         
         this.sprites = [];
         this.tiles = [];
+        this.lights = [];
         
+        this.MAX_LIGHTS = 10;
         
         
         this.width = parameters.width || 400;
@@ -82,7 +84,7 @@ var glixl = (function(glixl)
         this.sprite_texture_coords = [];
         
         this.ambient_uniform = this.context.getUniformLocation(this.context.program, "ambient_light");
-        this.ambient_light = 0.15;
+        this.ambient_light = 0.08;
         
         this.light_positions_uniform = this.context.getUniformLocation(this.context.program, "light_positions");
         this.light_colours_uniform = this.context.getUniformLocation(this.context.program, "light_colours");
@@ -153,6 +155,14 @@ var glixl = (function(glixl)
         this.tilemap[col][row][depth] = tile;
     }
     
+    glixl.Scene.prototype.add_light = function(light)
+    {
+        if (this.lights.length == this.MAX_LIGHTS)
+            throw new Error("*** GLIXL ERROR: Too many lights defined.");
+            
+        this.lights.push(light);
+    }
+    
     glixl.Scene.prototype.update = function()
     {
         var vertices = [];
@@ -218,6 +228,28 @@ var glixl = (function(glixl)
         
         this.context.uniform1f(this.ambient_uniform, this.ambient_light);
         
+        this.light_positions = [];
+        this.light_colours = [];
+        this.light_radii = [];
+        
+        for (var l=0 ; l<this.lights.length ; l++)
+        {
+            this.light_positions.push(this.lights[l].x);
+            this.light_positions.push(this.lights[l].y);
+            
+            this.light_colours.push(this.lights[l].colour[0]);
+            this.light_colours.push(this.lights[l].colour[1]);
+            this.light_colours.push(this.lights[l].colour[2]);
+            
+            this.light_radii.push(this.lights[l].radius);
+        }
+        
+        this.context.uniform2fv(this.light_positions_uniform, this.light_positions);
+        this.context.uniform3fv(this.light_colours_uniform, this.light_colours);
+        this.context.uniform1fv(this.light_radii_uniform, this.light_radii);
+        
+        this.context.uniform1i(this.light_count_uniform, this.lights.length);
+        
         // set lighting uniforms here
     }
     
@@ -271,7 +303,7 @@ var glixl = (function(glixl)
         var depth = Math.floor(start.z / this.tile_size.height);
   
         if (start_col === end_col && start_row === end_row)
-            return [{x: start_position.x, y:start_position.y}];
+            return [{x: start.x, y:start.y}];
   
         var col = start_col;
         var row = start_row;

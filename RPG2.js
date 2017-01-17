@@ -11,6 +11,8 @@ var Wiz = function(parameters)
     this.label.style.left = '0px';
     
     document.getElementsByTagName('body')[0].appendChild(this.label);*/
+    
+    this.light = new glixl.Light({x: this.x, y: this.y, radius:80, colour: [0.7, 0.7, 0.85]});
 }
 
 Wiz.prototype.update = function()
@@ -28,7 +30,9 @@ Wiz.prototype.update = function()
     
     /*this.label.style.top = String(0 + my_game.canvas.offsetTop + this.y - this.z - this.height/2-my_game.scene.viewport.y) + 'px';
     this.label.style.left = String(0 + my_game.canvas.offsetLeft + this.x-my_game.scene.viewport.x) + 'px';*/
-    
+    this.light.x = Math.floor(this.x+this.width/2);
+    this.light.y = Math.floor(this.y-this.height/2);
+
     my_game.scene.center_on(this);
 }
 extend(glixl.Sprite, Wiz);
@@ -78,10 +82,11 @@ var RPG = function()
     wiz.add_animation('walk_down', [50, 51, 52, 53], 120);
     wiz.set_animation('walk_down');
     scene.add_sprite(wiz);
-    
+    scene.add_light(wiz.light);
     
     var wiz = new Orc({frame: 42, x: 1200, y:666, z:32, width:32, height:32});
     scene.add_sprite(wiz);
+    
     
     var MAP_SIZE = [44, 32];
     
@@ -104,13 +109,19 @@ var RPG = function()
 	}
 	
 	scene.add_tile( new Rock({x:4*32 , y:6*32, z:32, width:32, height: 32 }) );
+	
+	scene.add_light( new glixl.Light({x: 336, y: 208, radius:130, colour: [0.9, 0.45, 0.2]}) );
+	scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.9, 0.45, 0.2]}) );
+	//scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.8, 0.8, 0.9]}) );
+    
+    
     
     /*for (var i=0 ; i<10 ; i++)
     {
         wiz = new glixl.Sprite({frame: 41, x: 120, y:i*32+16, z:32, width:32, height:32});
         scene.add_sprite(wiz);
     }*/
-    
+
     this.set_scene(scene);
 }
 

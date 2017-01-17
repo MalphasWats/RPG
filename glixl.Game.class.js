@@ -45,10 +45,6 @@ var glixl = (function(glixl)
             
             uniform float ambient_light;
             
-            vec2 point_light_pos = vec2(336, 208);
-            vec3 point_light_col = vec3(0.9, 0.45, 0.2);
-            float point_light_rad = 160.0;
-            
             uniform vec2 light_positions[10];
             uniform vec3 light_colours[10];
             uniform float light_radii[10];
@@ -57,20 +53,28 @@ var glixl = (function(glixl)
             
             void main() 
             { 
-                vec4 frag_color = texture2D(u_image, v_texCoords);
-                if (frag_color.a < 1.0)
+                vec4 frag_colour = texture2D(u_image, v_texCoords);
+                if (frag_colour.a < 1.0)
                     discard;
                 
-                float distance = distance(point_light_pos, v_position);
                 float diffuse = 0.0;
+                float dist;
                 
-                if (distance < point_light_rad)
+                vec3 light_colour = vec3(0.0, 0.0, 0.0);
+                
+                for (int i=0 ; i<10 ; i++)
                 {
-                    diffuse += (1.0 - distance / point_light_rad);
+                    dist = distance(light_positions[i], v_position);
+                    
+                    if (dist < light_radii[i])
+                    {
+                        diffuse +=  (1.0 - dist / light_radii[i]);
+                        light_colour += light_colours[i] * diffuse;
+                    }
+                    
                 }
 
-                //gl_FragColor = vec4(ambient_light * frag_color.rgb, 1);
-                gl_FragColor = vec4(min(frag_color.rgb * ((point_light_col * diffuse) + ambient_light), frag_color.rgb), 1.0);
+                gl_FragColor = vec4(min(frag_colour.rgb * (ambient_light + (light_colour)), frag_colour.rgb), 1.0);
             }
         `;
         
