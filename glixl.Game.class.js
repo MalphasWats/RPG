@@ -25,30 +25,46 @@ var glixl = (function(glixl)
             
             attribute vec2 a_texCoords;
             varying vec2 v_texCoords;
+            varying vec2 v_position;
             
             void main()
             {
                 gl_Position = projection_matrix * viewport_matrix  * vec4(a_position, 1);
-                //gl_Position = projection_matrix * vec4(a_position, 1);
-                //gl_Position = viewport_matrix * vec4(a_position, 1);
+                
                 v_texCoords = a_texCoords;
+                v_position = a_position.xy;
             }
         `;
         
         var fragment_shader_source = parameters.fragment_shader_source || `
             precision mediump float;
             uniform sampler2D u_image;
+            
             varying vec2 v_texCoords;
+            varying vec2 v_position;
             
             uniform float ambient_light;
+            
+            vec2 point_light_pos = vec2(300, 200);
+            vec3 point_light_col = vec3(1.0, 1.0, 1.0);
+            float point_light_rad = 180.0;
             
             void main() 
             { 
                 vec4 frag_color = texture2D(u_image, v_texCoords);
                 if (frag_color.a < 1.0)
                     discard;
-                    
-                gl_FragColor = vec4(ambient_light * frag_color.rgb, 1);
+                
+                float distance = distance(point_light_pos, v_position);
+                float diffuse = 0.0;
+                
+                if (distance < point_light_rad)
+                {
+                    diffuse += (1.0 - distance / point_light_rad);
+                }
+
+                //gl_FragColor = vec4(ambient_light * frag_color.rgb, 1);
+                gl_FragColor = vec4(min(frag_color.rgb * ((point_light_col * diffuse) + ambient_light), frag_color.rgb), 1.0);
             }
         `;
         
