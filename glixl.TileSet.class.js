@@ -1,6 +1,6 @@
 var glixl = (function(glixl)
 {
-    glixl.Tile = function Tile(parameters)
+    glixl.TileSet = function TileSet(parameters)
     {
         this.x = parameters.x || 0;
         this.y = parameters.y || 0;
@@ -9,20 +9,19 @@ var glixl = (function(glixl)
         this.width = parameters.width || 16;
         this.height = parameters.height || 16;
         
-        this.parent = parameters.parent || false;
+        //this.frame = parameters.frame || 0;
         
-        this.frame = parameters.frame || 0;
+        this.tiles = parameters.tiles || [];
     }
     
-    glixl.Tile.prototype.update = function()
+    glixl.TileSet.prototype.update = function()
     {
         
     }
     
-    glixl.Tile.prototype.use = function()
+    glixl.TileSet.prototype.use = function()
     {
-        if (this.parent)
-            this.parent.use();           
+        
     }
     
     return glixl;

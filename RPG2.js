@@ -70,6 +70,23 @@ Rock.prototype.use = function()
 }
 extend(glixl.Tile, Rock);
 
+
+var Tree = function(parameters)
+{
+    glixl.TileSet.call(this, parameters);
+    
+    this.tiles.push( new glixl.Tile({ frame:20, x:this.x , y:this.y, z:this.z, width:this.width/2, height: this.height/2, parent:this }) )
+    this.tiles.push( new glixl.Tile({ frame:21, x:this.x+this.width/2 , y:this.y, z:this.z, width:this.width/2, height: this.height/2, parent:this }) )
+    this.tiles.push( new glixl.Tile({ frame:10, x:this.x , y:this.y, z:this.z+this.height/2, width:this.width/2, height: this.height/2, parent:this }) )
+    this.tiles.push( new glixl.Tile({ frame:11, x:this.x+this.width/2 , y:this.y, z:this.z+this.height/2, width:this.width/2, height: this.height/2, parent:this }) )
+}
+
+Tree.prototype.use = function()
+{
+    console.log("I'm a GIANT tree");
+}
+extend(glixl.TileSet, Tree);
+
 var RPG = function()
 {	
     glixl.Game.call(this, {});
@@ -114,7 +131,9 @@ var RPG = function()
 	scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.9, 0.45, 0.2]}) );
 	//scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.8, 0.8, 0.9]}) );
     
+    var tree = new Tree( {x: 128, y: 128, z: 32, width: 64, height: 64} );
     
+    scene.add_tileset(tree);
     
     /*for (var i=0 ; i<10 ; i++)
     {
