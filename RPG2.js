@@ -101,7 +101,7 @@ var RPG = function()
     scene.add_sprite(wiz);
     scene.add_light(wiz.light);
     
-    var wiz = new Orc({frame: 42, x: 1200, y:666, z:32, width:32, height:32});
+    var wiz = new Orc({frame: 42, x: 192, y:128, z:32, width:32, height:32});
     scene.add_sprite(wiz);
     
     
@@ -128,7 +128,7 @@ var RPG = function()
 	scene.add_tile( new Rock({x:4*32 , y:6*32, z:32, width:32, height: 32 }) );
 	
 	scene.add_light( new glixl.Light({x: 336, y: 208, radius:130, colour: [0.9, 0.45, 0.2]}) );
-	scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.9, 0.45, 0.2]}) );
+	scene.add_light( new glixl.Light({x: 432, y: 400, radius:130, colour: [0.9, 0.45, 0.2]}) );
 	//scene.add_light( new glixl.Light({x: 436, y: 408, radius:130, colour: [0.8, 0.8, 0.9]}) );
     
     var tree = new Tree( {x: 128, y: 128, z: 32, width: 64, height: 64} );
