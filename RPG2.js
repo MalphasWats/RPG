@@ -68,7 +68,7 @@ Rock.prototype.use = function()
 {
     console.log('Ouch!');
 }
-
+extend(glixl.Tile, Rock);
 
 var RPG = function()
 {	
