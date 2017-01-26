@@ -84,7 +84,7 @@ var glixl = (function(glixl)
         this.sprite_texture_coords = [];
         
         this.ambient_uniform = this.context.getUniformLocation(this.context.program, "ambient_light");
-        this.ambient_light = 0.68;
+        this.ambient_light = 0.24;
         
         this.light_positions_uniform = this.context.getUniformLocation(this.context.program, "light_positions");
         this.light_colours_uniform = this.context.getUniformLocation(this.context.program, "light_colours");
